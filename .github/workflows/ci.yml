@@ -2,12 +2,13 @@
 name: CI
 
 on:
-  push:
-    branches:
-      - '**'
+  workflow_dispatch:
   pull_request:
     branches:
       - main
+  push:
+    branches:
+      - '**'
 
 jobs:
 
@@ -20,18 +21,9 @@ jobs:
       - name: Build
         run: echo "Building"
 
-  package-gate:
-    name: Package?
-    needs: build
-    runs-on: ubuntu-latest
-    environment: package
-    steps:
-      - name: Package
-        run: echo "Package (approved)"
-
   package:
     name: Package
-    needs: package-gate
+    needs: build
     runs-on: ubuntu-latest
     environment: package
     steps:
