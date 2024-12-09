@@ -12,16 +12,73 @@ on:
 jobs:
 
   build:
-      name: Build
-      runs-on: ubuntu-latest
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Build
+        run: echo "Building"
 
+  package-gate:
+    name: Package?
+    needs: build
+    runs-on: ubuntu-latest
+    environment: package
+    steps:
+      - name: Package
+        run: echo "Package (approved)"
+
+  package:
+    name: Package
+    needs: package-gate
+    runs-on: ubuntu-latest
+    environment: package
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Package
+        run: echo "Packaging"
+    
+  deploy-dev-gate:
+      name: Deploy to dev?
+      needs: package
+      runs-on: ubuntu-latest
+      environment: dev
       steps:
-        
+        - name: Deploy
+          run: echo "Deploy to dev (approved)"
+    
+  deploy-dev-exec:
+      name: Deploy to dev?
+      needs: deploy-dev-gate
+      runs-on: ubuntu-latest
+      steps:
         - name: Checkout
           uses: actions/checkout@v4
-
-        - name: Build
-          run: echo "Building"
+        - name: Deploy
+          run: echo "Deploy to dev (commenced)"
+    
+  deploy-tst-gate:
+      name: Deploy to tst?
+      needs: package
+      runs-on: ubuntu-latest
+      environment: tst
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Deploy
+          run: echo "Deploy to tst (approved)"
+    
+  deploy-tst-exec:
+      name: Deploy to tst?
+      needs: deploy-tst-gate
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Deploy
+          run: echo "Deploy to tst (commenced)"
 
 
     
